@@ -23,7 +23,7 @@
     <div class="columns">
       <div class="column">
         <div class="columns is-centered">
-          <input type="button" class="button is-dark" value="SPIN ROULETTE" id='spin' v-on:click="spin"/>
+          <input type="button" class="button is-dark" value="ルーレットを回す" id='spin' v-on:click="spin"/>
         </div>
         <div class="columns is-centered">
           <canvas id="canvas" width="500" height="500"></canvas>
@@ -33,11 +33,11 @@
         <div class="columns is-multiline">
           <div class="column is-half">
             <div class="field">
-              <input class="input" type="text" placeholder="Input More Prize" v-model="new_option" v-on:keyup.enter="addOptions">
+              <input class="input" type="text" placeholder="名前を入れてね" v-model="new_option" v-on:keyup.enter="addOptions">
             </div>
           </div>
           <div class="column is-half">
-            <button class="button is-primary" v-on:click="addOptions">Add Prize</button>
+            <button class="button is-primary" v-on:click="addOptions">追加</button>
           </div>
           <div class="column is-one-quarter" v-for="option in options" :key="option">
             <button class="button is-danger" v-on:click="removeOptions(option)">x</button>
@@ -67,13 +67,11 @@ var app = new Vue({
     spinTimeTotal: 0,
     ctx: ''
   },
-
   computed:{
     arc: function () {
       return Math.PI / (this.options.length / 2);
     }
   },
-
   methods: {
     byte2Hex: function (n) {
       var nybHexString = "0123456789ABCDEF";
@@ -122,6 +120,7 @@ var app = new Vue({
         this.ctx.lineWidth = 2;
 
         this.ctx.font = 'bold 12px Helvetica, Arial';
+
 
         for(var i = 0; i < this.options.length; i++) {
           var angle = this.startAngle + i * this.arc;
@@ -203,11 +202,22 @@ var app = new Vue({
       var ts = (t/=d)*t;
       var tc = ts*t;
       return b+c*(tc + -3*ts + 3*t);
+    },
+    fetchData: async function (hogehoge) {
+      const res = await fetch("https://private-6947e-mnuma1.apiary-mock.com/members").then(function(response) {
+        return response.json();
+      }).then(function(json) {
+        return json;
+      }).catch({})
+      return res
     }
   },
-
-  mounted() {
-    this.drawRouletteWheel();
+  created() {
+    ops = this.fetchData();
+    ops.then(value => {
+      this.options = value;
+      this.drawRouletteWheel();
+    })
   }
 });
 
